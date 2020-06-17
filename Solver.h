@@ -1,7 +1,9 @@
 #pragma once
 
+#include <array>
 #include <chrono>
 #include <set>
+#include <vector>
 
 #include <folly/Optional.h>
 #include <folly/container/EvictingCacheMap.h>
@@ -29,17 +31,30 @@ namespace solitaire {
     SolverResult solve();
 
   private:
-    std::vector<Move> _getValidMoves(const Solitaire& game);
-    void _addAceMoves(const Solitaire& game, std::vector<Move>& moves);
-    void _addToFoundationMoves(const Solitaire& game, std::vector<Move>& moves);
+    const static size_t MAX_VALID_MOVES = 25;
+    const static size_t MAX_VALID_TABLEAU_MOVES = 14;
+    void _getValidMoves(const Solitaire& game,
+			std::array<Move, MAX_VALID_MOVES>& moves,
+			size_t& numMoves);
+    void _addAceMoves(const Solitaire& game,
+		      std::array<Move, MAX_VALID_MOVES>& moves,
+		      size_t& numMoves);
+    void _addToFoundationMoves(const Solitaire& game,
+			       std::array<Move, MAX_VALID_MOVES>& moves,
+			       size_t& numMoves);
     void _addCardRevealingMoves(const Solitaire& game,
-				std::vector<Move>& moves);
+				std::array<Move, MAX_VALID_MOVES>& moves,
+				size_t& numMoves);
     void _addWasteToTableauMoves(const Solitaire& game,
-				 std::vector<Move>& moves);
-    void _addDrawMove(const Solitaire& game, std::vector<Move>& moves);
+				 std::array<Move, MAX_VALID_MOVES>& moves,
+				 size_t& numMoves);
+    void _addDrawMove(const Solitaire& game,
+		      std::array<Move, MAX_VALID_MOVES>& moves,
+		      size_t& numMoves);
     void _addTableauToTableauMoves(const Solitaire& game,
-				   std::vector<Move>& moves);
-    std::string _getGameCacheStr(const Solitaire& game, bool canFlipDeck) const;
+				   std::array<Move, MAX_VALID_MOVES>& moves,
+				   size_t& numMoves);
+    uint64_t _getGameCacheStr(const Solitaire& game, bool canFlipDeck) const;
     folly::Optional<std::vector<Move>>
       _maybeApplyMove(const Move& move, const Solitaire& Game,
 		      std::set<std::vector<Card>>& seenCardStacks,
@@ -53,8 +68,10 @@ namespace solitaire {
     Solitaire _game;
     std::chrono::steady_clock::time_point _startTime;
     std::chrono::seconds _timeout;
-    folly::EvictingCacheMap<std::string, bool> _stateCache;
-    folly::EvictingCacheMap<std::string, std::vector<Move>> _tableauMoveCache;
+    folly::EvictingCacheMap<uint64_t, bool> _stateCache;
+    folly::EvictingCacheMap<
+      uint64_t, std::pair<std::array<Move, MAX_VALID_TABLEAU_MOVES>, size_t>>
+    _tableauMoveCache;
     uint64_t _numCalls;
   };
 }
