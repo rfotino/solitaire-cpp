@@ -16,6 +16,11 @@ DECLARE_uint64(state_cache_size);
 DECLARE_uint64(move_cache_size);
 
 namespace solitaire {
+  // Helpers for making human-readable cache keys
+  const static std::array<char, NUM_SUITS> SUIT_CHARS = {'S', 'H', 'D', 'C'};
+  const static std::array<char, NUM_RANKS> RANK_CHARS =
+    {'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'};
+
   enum class SolverStatus { SOLVED, TIMEOUT, NO_SOLUTION };
   struct SolverResult {
     SolverStatus status;
@@ -29,6 +34,7 @@ namespace solitaire {
       : _game(game), _timeout(timeout), _stateCache(FLAGS_state_cache_size),
 	_tableauMoveCache(FLAGS_move_cache_size), _numCalls(0) {}
     SolverResult solve();
+    size_t getNumCalls() const { return _numCalls; }
 
   private:
     const static size_t MAX_VALID_MOVES = 25;
@@ -72,6 +78,6 @@ namespace solitaire {
     folly::EvictingCacheMap<
       uint64_t, std::pair<std::array<Move, MAX_VALID_TABLEAU_MOVES>, size_t>>
     _tableauMoveCache;
-    uint64_t _numCalls;
+    size_t _numCalls;
   };
 }

@@ -9,13 +9,6 @@ DEFINE_uint64(move_cache_size, 100000,
 	      "Max entries for tableau move cache");
 
 namespace solitaire {
-  // Helpers for making human-readable cache keys
-  const static std::array<char, NUM_SUITS> SUIT_CHARS = {'S', 'H', 'D', 'C'};
-  const static std::array<char, NUM_RANKS> RANK_CHARS =
-    {'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'};
-  const static auto START_TIME = std::chrono::steady_clock::now();
-  static size_t totalMoves = 0;
-
   // Main entry point for solving, this starts the timer and starts solving
   // and returns the winning moves (if any) and some diagnostic info like
   // time elapsed.
@@ -106,7 +99,7 @@ namespace solitaire {
       const auto& srcCol = game.tableau()[srcColIdx];
       if (srcCol.faceUpSize == 0) {
 	needsKingSpace = false;
-      } else if (srcCol.faceDownSize > 0) {
+      } else {
 	for (int8_t dstColIdx = 0; dstColIdx < game.tableau().size();
 	     dstColIdx++) {
 	  if (srcColIdx == dstColIdx) {
@@ -405,22 +398,19 @@ namespace solitaire {
 
     // Print out diagnostic info every so often
     _numCalls++;
-    totalMoves++;
-    if (_numCalls % 5000 == 0) {
+    if (_numCalls % 100000 == 0) {
       const auto now = std::chrono::steady_clock::now();
       const auto elapsed =
 	std::chrono::duration_cast<std::chrono::seconds>(now - _startTime);
-      const auto totalElapsed =
-	std::chrono::duration_cast<std::chrono::seconds>(now - START_TIME).count();
-      std::cout << "calls: " << _numCalls << std::endl;
-      std::cout << "depth: " << depth << std::endl;
-      std::cout << "state cache size: " << _stateCache.size() << std::endl;
-      std::cout << "move cache size: " << _tableauMoveCache.size() << std::endl;
-      std::cout << "elapsed: " << elapsed.count() << " seconds" << std::endl;
-      if (totalElapsed > 0) {
-	std::cout << "moves/sec: " << totalMoves / totalElapsed << std::endl;
+      std::cerr << "calls: " << _numCalls << std::endl;
+      std::cerr << "depth: " << depth << std::endl;
+      std::cerr << "state cache size: " << _stateCache.size() << std::endl;
+      std::cerr << "move cache size: " << _tableauMoveCache.size() << std::endl;
+      std::cerr << "elapsed: " << elapsed.count() << " seconds" << std::endl;
+      if (elapsed.count() > 0) {
+	std::cerr << "moves/sec: " << _numCalls / elapsed.count() << std::endl;
       }
-      std::cout << game << std::endl;
+      std::cerr << game << std::endl;
     }
 
     std::array<Move, MAX_VALID_MOVES> moves;

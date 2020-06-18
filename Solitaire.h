@@ -34,11 +34,11 @@ namespace solitaire {
   std::array<Card, NUM_CARDS> getShuffledDeck();
 
   enum class MoveType {
-    DRAW,
-    WASTE_TO_FOUNDATION,
-    WASTE_TO_TABLEAU,
-    TABLEAU_TO_FOUNDATION,
-    TABLEAU_TO_TABLEAU,
+    DRAW                  = 1,
+    WASTE_TO_FOUNDATION   = 2,
+    WASTE_TO_TABLEAU      = 3,
+    TABLEAU_TO_FOUNDATION = 4,
+    TABLEAU_TO_TABLEAU    = 5,
   };
 
   const static size_t NUM_MOVE_EXTRAS = 3;
