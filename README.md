@@ -13,7 +13,7 @@ moves/second out of the CPU.
 
 There is quite a bit of previous literature on the subject of solitaire
 solvers, e.g. http://web.engr.oregonstate.edu/~afern/papers/solitaire.pdf
-and https://arxiv.org/pdf/1906.12314.pdf. It seems to indicate that my
+and https://arxiv.org/pdf/1906.12314.pdf. They seem to indicate that my
 brute force solution will not be feasible in beating the current
 results.
 
@@ -24,7 +24,7 @@ but that solution would never be found by a human playing a standard
 game because you have to make some unusual moves like drawing and playing
 from the excess cards when there is a card-revealing move already
 available. So for a great many games you miss a winning solution
-because you play the most optimal solution that you can actually see,
+because you play the most optimal move that you can actually see,
 and then obviously don't backtrack to correct it like this solver does.
 
 # Building
